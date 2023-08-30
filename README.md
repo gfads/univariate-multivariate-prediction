@@ -1,5 +1,15 @@
 # Univariate vs multivariate prediction for containerised applications auto-scaling:: a comparative study
 
+## Tips for cloning anonymised repositories.
+
+We have anonymised the repository to follow blind peer review process requirements. You can clone this repository using GUI software available for Windows or macOS at this [link](https://github.com/fedebotu/clone-anonymous-github).
+
+However, if you are a Linux user or prefer the command line, you can clone this repository using these commands:
+
+    $ git clone https://github.com/fedebotu/clone-anonymous-github.git
+    $ cd clone-anonymous-github; 
+    $ python3 src/download.py --url https://anonymous.4open.science/r/univariate-multivariate-prediction-4054/
+
  ## Project description
  
 This paper presents a comparative study assessing univariate and multivariate proactive auto-scaling of containerised applications. A custom-made multivariate auto-scaling tool called Multivariate Forecasting Tool (MFT) was developed and compared with a production-grade univariate system called Predict Kube (PK). Both applications were evaluated using four popular open-source benchmark applications (Daytrader, Online Boutique, Quarkus-HTTP-Demo and Travels).
