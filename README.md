@@ -7,7 +7,7 @@ We have anonymised the repository to follow blind peer review process requiremen
 However, if you are a Linux user or prefer the command line, you can clone this repository using these commands:
 
     $ git clone https://github.com/fedebotu/clone-anonymous-github.git
-    $ cd clone-anonymous-github; 
+    $ cd clone-anonymous-github
     $ python3 src/download.py --url https://anonymous.4open.science/r/univariate-multivariate-prediction-4054/
 
  ## Project description
