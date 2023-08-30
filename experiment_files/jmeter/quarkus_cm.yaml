@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jmeter-config
+  namespace: jmeter
+data:
+  JVM_ARGS: "-Xms1g -Xmx1g -Xtune:virtualized -XX:+UseContainerSupport -XX:MaxRAMPercentage=90"
+  JHOST: "quarkus-svc.quarkus"
+  JPORT: "9080"
+  JRAMP: "60"
+  JMAXTHINKTIME: "0"
+  TEST_GROUP: "periodic"
+  #TEST_GROUP: "training_periodic"
+  #TEST_GROUP: "testing"
+  TEST_PLAN: "quarkus.jmx"
+
+          #readinessProbe:
+          #  httpGet:
+          #    path: "/travels"
+          #    port: 8000
+          #  initialDelaySeconds: 10
+          #  periodSeconds: 5
+#          livenessProbe:
+ #           initialDelaySeconds: 10
+  #         periodSeconds: 5
+   #         httpGet:
+   #           path: "/travels"
+    #          port: 8000

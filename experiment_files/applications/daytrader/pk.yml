@@ -1,0 +1,34 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-predictkube-secret
+  namespace: daytrader
+spec:
+  secretTargetRef:
+  - parameter: apiKey
+    name: predictkube-secrets
+    key: apiKey
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: daytrader-service-scaler
+  namespace: daytrader
+spec:
+  scaleTargetRef:
+    name: daytrader-service
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(base_cpu_processCpuTime_seconds{app="daytrader"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.8' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret

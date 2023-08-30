@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jmeter-config
+  namespace: jmeter
+data:
+  JHOST: "travels.travel-agency"
+  JPORT: "8000"
+  JPROTOCOL: "http"
+  JTHREADS: "20"
+  JRAMP: "60"
+  TEST_GROUP: "periodic_experiment"
+  TEST_PLAN: "travels.jmx"
+

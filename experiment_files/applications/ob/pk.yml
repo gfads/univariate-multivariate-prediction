@@ -1,0 +1,150 @@
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-predictkube-secret
+  namespace: default
+spec:
+  secretTargetRef:
+  - parameter: apiKey
+    name: predictkube-secrets
+    key: apiKey
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cartservice-scaler
+spec:
+  scaleTargetRef:
+    name: cartservice
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"cartservice.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.16' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: checkoutservice-scaler
+spec:
+  scaleTargetRef:
+    name: checkoutservice
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"checkoutservice.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.08' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: currencyservice-scaler
+spec:
+  scaleTargetRef:
+    name: currencyservice
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"currencyservice.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.08' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: frontend-scaler
+spec:
+  scaleTargetRef:
+    name: frontend
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"frontend.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.08' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret
+
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: productcatalogservice-scaler
+spec:
+  scaleTargetRef:
+    name: productcatalogservice
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"productcatalogservice.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.08' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret
+
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: recommendationservice-scaler
+spec:
+  scaleTargetRef:
+    name: recommendationservice
+  pollingInterval: 15
+  cooldownPeriod: 300
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  triggers:
+  - type: predictkube
+    metadata:
+      predictHorizon: "1m"
+      historyTimeWindow: "12h"  # We recomend to use minimum 7-14 days time window as historical data
+      prometheusAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+      query: sum(rate(container_cpu_usage_seconds_total{id=~".*kubepods.*", pod=~"recommendationservice.*", name!~".*POD.*"}[1m]))
+      queryStep: "1m" # Note: query step duration for range prometheus queries
+      threshold: '0.16' # Value to start scaling for
+    authenticationRef:
+      name: keda-trigger-auth-predictkube-secret

@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-deployment
+  namespace: monitoring
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus-server
+    spec:
+      containers:
+        - name: prometheus
+          #image: quay.io/prometheus/prometheus:v2.26.0
+          image: prom/prometheus:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention=60d"
+            - "--web.enable-admin-api"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
+
+            #- name: prometheus-storage-volume
+            #  mountPath: /prometheus/
+
+            - name: prometheus-pvc
+              mountPath: /prometheus
+
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "2Gi"
+            requests:
+              cpu: "100m"
+              memory: "1Gi"
+
+      initContainers:
+      - name: prometheus-data-permission-fix
+        image: busybox
+        command: ["/bin/chmod","-R","777", "/prometheus"]
+        volumeMounts:
+        - name: prometheus-pvc
+          mountPath: /prometheus
+
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+#            defaultMode: 420
+            name: prometheus-server-conf
+
+#        - name: prometheus-storage-volume
+#          emptyDir: {}
+
+        - name: prometheus-pvc
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
+      nodeSelector:
+        disktype: ssd
+  selector:
+    matchLabels:
+      app: prometheus-server
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-service
+  namespace: monitoring
+  annotations:
+      prometheus.io/scrape: 'true'
+      prometheus.io/port:   '9090'
+spec:
+  selector:
+    app: prometheus-server
+  type: NodePort
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30000
+---

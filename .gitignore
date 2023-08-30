@@ -1,0 +1,6 @@
+pk
+.idea
+venv
+__pycache__
+database/py.py
+results/py.py
